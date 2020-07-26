@@ -20,11 +20,9 @@ CREATE TABLE `role`(
   CONSTRAINT `DPT_FK` FOREIGN KEY (`department_id`) REFERENCES `department`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT
 );
 
-​
 -- Create the Employee Table
-CREATE TABLE `employee`
-(
-    `id` INT NOT NULL AUTO_INCREMENT, -- primary key column
+CREATE TABLE `employee` (
+    `id` INT NOT NULL AUTO_INCREMENT,
     `first_name` VARCHAR(30) NOT NULL,
     `last_name` VARCHAR(30) NOT NULL,
     `role_id` INT NOT NULL,
