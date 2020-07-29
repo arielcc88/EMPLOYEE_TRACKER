@@ -21,7 +21,7 @@ const { getMenuPos } = require(path.join(
     "util.js"
 ));
 
-const menuRouter = (ans) => {
+const controllerRouter = (ans) => {
     //1. check type of answer and value
     switch (ans.name) {
         case "menu_main":
@@ -39,6 +39,30 @@ const menuRouter = (ans) => {
             }
             break;
         
+        case "menu_add":
+            //add dept, role or employee
+            switch (getMenuPos(ans.answer)) {
+                case "1":
+                    //calling for adding a department prompts
+                    return prompts.addPrompts.dpt;
+                    break;
+                
+                case "2":
+                    //calling for adding a department prompts
+                    return prompts.addPrompts.role;
+                    break;
+            
+                default:
+                    break;
+            }
+            break;
+
+        //Department Prompts
+        case "dpt_name":
+            console.log("dept name ", ans.answer);
+            return prompts.menu.menu_main;
+            break;
+        
         default:
             return prompts.menu.menu_main;
             break;
@@ -49,4 +73,4 @@ const getMainMenu = () => {
     return prompts.menu.menu_main
 }
 
-module.exports = {menuRouter, getMainMenu};
+module.exports = {controllerRouter, getMainMenu};
