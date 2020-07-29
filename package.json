@@ -20,7 +20,7 @@
   "homepage": "https://github.com/arielcc88/EMPLOYEE_TRACKER#readme",
   "dependencies": {
     "console.table": "^0.10.0",
-    "inquirer": "^7.3.3",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "inquirer": "^6.3.1"
   }
 }
