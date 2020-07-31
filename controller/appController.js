@@ -15,13 +15,18 @@ const prompts = require(path.join(
     path.resolve(__dirname, "../lib"),
     "prompts.js"
 ));
+//models
+const mdDepartment = require(path.join(
+    path.resolve(__dirname, "../model"),
+    "department.js"
+));
 //utility functions
 const { getMenuPos } = require(path.join(
     path.resolve(__dirname, "../lib"),
     "util.js"
 ));
 
-const controllerRouter = (ans) => {
+const controllerRouter = async (ans) => {
     //1. check type of answer and value
     switch (ans.name) {
         case "menu_main":
@@ -59,7 +64,8 @@ const controllerRouter = (ans) => {
 
         //Department Prompts
         case "dpt_name":
-            console.log("dept name ", ans.answer);
+            console.log(`${await mdDepartment(ans.answer)} Department inserted successfully!\n`);
+            //returning prompt for main menu
             return prompts.menu.menu_main;
             break;
         
