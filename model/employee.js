@@ -7,7 +7,10 @@
 const mysql = require("mysql");
 const db_conn = require("../config/config.json")["DB_CONN"];
 
-const rle_insert = (rle_obj) => {
+//---------------
+//EMPLOYEE INSERT
+//---------------
+const emp_insert = (emp_obj) => {
     return new Promise(resolve => {
         //DB Connection
         const connection = mysql.createConnection(db_conn);
@@ -18,8 +21,8 @@ const rle_insert = (rle_obj) => {
                 //----------------
                 //Inserting department if connected
                 connection.query(
-                    "INSERT INTO role SET ?",
-                    rle_obj,
+                    "INSERT INTO employee SET ?",
+                    emp_obj,
                     function (err, res) {
                         if (err) throw err;
                         //end connection
@@ -35,7 +38,10 @@ const rle_insert = (rle_obj) => {
     });
 };
 
-const rle_read_all = () => {
+//---------------
+//EMPLOYEE INSERT
+//---------------
+const emp_read_all = () => {
     return new Promise(resolve => {
         //DB Connection
         const connection = mysql.createConnection(db_conn);
@@ -44,9 +50,9 @@ const rle_read_all = () => {
             connection.connect((err) => {
                 if (err) throw err;
                 //----------------
-                //Reading roles if connected
+                //Inserting department if connected
                 connection.query(
-                    "SELECT * FROM role",
+                    "SELECT * FROM employee",
                     function (err, res) {
                         if (err) throw err;
                         //end connection
@@ -63,6 +69,4 @@ const rle_read_all = () => {
 };
 
 
-
-
-module.exports = { rle_insert, rle_read_all };
+module.exports = { emp_insert, emp_read_all };

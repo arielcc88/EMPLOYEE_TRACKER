@@ -24,6 +24,10 @@ const mdRole = require(path.join(
   path.resolve(__dirname, "../model"),
   "role.js"
 ));
+const mdEmp = require(path.join(
+  path.resolve(__dirname, "../model"),
+  "employee.js"
+));
 //app resources - helpers
 const helpers = require(path.join(
   path.resolve(__dirname, "../lib"),
@@ -69,12 +73,17 @@ const controllerRouter = async (ans) => {
           return prompts.addPrompts.role[prmtIndex];
           break;
 
+        case "3":
+          //calling functions for adding employee
+          return prompts.addPrompts.employee[prmtIndex];
+          break;
+
         default:
           break;
       }
       break;
 
-    //Department Prompts
+    //---- Department Addition Prompts ----
     case "dpt_name":
       console.log(
         `${await mdDepartment.dpt_insert(
@@ -84,13 +93,14 @@ const controllerRouter = async (ans) => {
       //returning prompt for main menu
       return prompts.menu.menu_main;
       break;
-
+    
+    //---- Role Addition Prompts ----
     case "rle-title":
     case "rle-salary":
     case "rle-department_id":
       //update prompt counter and set Role Obj
       prmtIndex = helpers.setRoleObj(ans, prmtIndex);
-      //if salary was asked, departnments are populated from DB
+      //if salary was asked, departments are populated from DB
       if (ans.name === "rle-salary") {
         //populate department choices
         prompts.addPrompts.role[prompts.addPrompts.role.length - 1].choices = [
@@ -103,10 +113,49 @@ const controllerRouter = async (ans) => {
             helpers.rleObj
           )} New Role inserted successfully!\n`
         );
+        //resetting prompt index
+        prmtIndex = 0;
         //return to main menu
         return prompts.menu.menu_main;
       }
       return prompts.addPrompts.role[prmtIndex];
+      break;
+
+    //---- Employee Addition Prompts ----
+    case "emp-first_name":
+    case "emp-last_name":
+    case "emp-role_id":
+    case "emp-manager_id":
+      //updating prompt counter and setting Employee Obj
+      prmtIndex = helpers.setEmpObj(ans, prmtIndex);
+      //if last name entered, get departments from Role Table.
+      if(ans.name === "emp-last_name"){
+        //querying role table 
+        prompts.addPrompts.employee[prompts.addPrompts.employee.length - 2].choices = [
+          ...helpers.getRoleArray(await mdRole.rle_read_all()),
+        ];
+      }
+      else if(ans.name === "emp-role_id"){
+        //querying employee table 
+        prompts.addPrompts.employee[prompts.addPrompts.employee.length - 1].choices = [
+          ...helpers.getEmpArray(await mdEmp.emp_read_all()),
+        ];
+        //pushing -- NO MANAGER -- option
+        prompts.addPrompts.employee[prompts.addPrompts.employee.length - 1].choices.push("0. -- NO MANAGER --");
+      }
+      else if(ans.name === "emp-manager_id"){
+        //send new employee to DB
+        console.log(
+          `${await mdEmp.emp_insert(
+            helpers.empObj
+          )} New employee added successfully!\n`
+        );
+        //resetting prompt index
+        prmtIndex = 0;
+        //return to main menu
+        return prompts.menu.menu_main;
+      }
+      return prompts.addPrompts.employee[prmtIndex];
       break;
 
     default:
