@@ -10,6 +10,8 @@
  */
 //path
 const path = require("path");
+//console.table
+const cTable = require('console.table');
 //prompts
 const prompts = require(path.join(
   path.resolve(__dirname, "../lib"),
@@ -54,11 +56,19 @@ const controllerRouter = async (ans) => {
           return prompts.menu.menu_add;
           break;
 
+        case "2":
+          //calling for viewing departments, roles or employess
+          return prompts.menu.menu_view;
+          break;
+
         default:
           break;
       }
       break;
 
+//===========================
+// ADDITION SECTION -- BEGINS
+//===========================
     case "menu_add":
       //add dept, role or employee
       switch (helpers.getMenuPos(ans.answer)) {
@@ -81,7 +91,7 @@ const controllerRouter = async (ans) => {
         default:
           break;
       }
-      break;
+    break;
 
     //---- Department Addition Prompts ----
     case "dpt_name":
@@ -90,9 +100,9 @@ const controllerRouter = async (ans) => {
           ans.answer
         )} Department inserted successfully!\n`
       );
-      //returning prompt for main menu
-      return prompts.menu.menu_main;
-      break;
+    //returning prompt for main menu
+    return prompts.menu.menu_main;
+    break;
     
     //---- Role Addition Prompts ----
     case "rle-title":
@@ -118,8 +128,8 @@ const controllerRouter = async (ans) => {
         //return to main menu
         return prompts.menu.menu_main;
       }
-      return prompts.addPrompts.role[prmtIndex];
-      break;
+    return prompts.addPrompts.role[prmtIndex];
+    break;
 
     //---- Employee Addition Prompts ----
     case "emp-first_name":
@@ -155,8 +165,57 @@ const controllerRouter = async (ans) => {
         //return to main menu
         return prompts.menu.menu_main;
       }
-      return prompts.addPrompts.employee[prmtIndex];
-      break;
+    return prompts.addPrompts.employee[prmtIndex];
+    break;
+
+//=========================
+// ADDITION SECTION -- ENDS
+//=========================
+
+
+//===========================
+// VIEWING SECTION -- BEGINS
+//===========================
+case "menu_view":
+      //view dept, role or employee
+      switch (helpers.getMenuPos(ans.answer)) {
+        case "1":
+          //load and display departments using console.table
+          console.log(``);
+          console.table(await mdDepartment.dpt_read_all());
+          console.log(``);
+          //return to menu_view
+          return prompts.menu.menu_view;
+          break;
+
+        case "2":
+          //load and display roles using console.table
+          console.log(``);
+          console.table(await mdRole.rle_read_all_view());
+          console.log(``);
+          //return to menu_view
+          return prompts.menu.menu_view;
+          break;
+
+        case "3":
+          //load and display roles using console.table
+          console.log(``);
+          console.table(await mdEmp.emp_read_all_view());
+          console.log(``);
+          //return to menu_view
+          return prompts.menu.menu_view;
+          break;
+
+        default:
+          break;
+      }
+    break;
+
+
+
+//=========================
+// VIEWING SECTION -- ENDS
+//=========================
 
     default:
       return prompts.menu.menu_main;

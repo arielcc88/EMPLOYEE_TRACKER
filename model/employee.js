@@ -39,7 +39,7 @@ const emp_insert = (emp_obj) => {
 };
 
 //---------------
-//EMPLOYEE INSERT
+//EMPLOYEE SELECT
 //---------------
 const emp_read_all = () => {
     return new Promise(resolve => {
@@ -68,5 +68,39 @@ const emp_read_all = () => {
     });
 };
 
+//---------------
+//EMPLOYEE SELECT FOR VIEW
+//---------------
+const emp_read_all_view = () => {
+    return new Promise(resolve => {
+        //DB Connection
+        const connection = mysql.createConnection(db_conn);
+        //Initiating connection
+        try {
+            connection.connect((err) => {
+                if (err) throw err;
+                //----------------
+                //Inserting department if connected
+                connection.query(
+                  //  select A.name as 'Employee', B.name as 'Manager' from employee as A Inner Join employee as B on A.manager_id = B.id;
+                    "SELECT concat(emp.first_name, ' ', emp.last_name) as employee, rle.title, rle.salary, " +
+                    "concat(mgm.first_name, ' ', mgm.last_name) as manager " +
+                    "FROM employee as emp LEFT JOIN employee as mgm on emp.manager_id = mgm.id " +
+                    "INNER JOIN role as rle on emp.role_id = rle.id",
+                    function (err, res) {
+                        if (err) throw err;
+                        //end connection
+                        connection.end();
+                        //returning number of records affected (new PROMISE)
+                        resolve(res);
+                    }
+                );
+            });
+        } catch (error) {
+            console.error("DB_ERR! " + error);
+        }
+    });
+};
 
-module.exports = { emp_insert, emp_read_all };
+
+module.exports = { emp_insert, emp_read_all, emp_read_all_view };
