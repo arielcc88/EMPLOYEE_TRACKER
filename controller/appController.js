@@ -61,6 +61,28 @@ const controllerRouter = async (ans) => {
           return prompts.menu.menu_view;
           break;
 
+        //===============
+        //employee by Manager Menu
+        //===============
+        case "3":
+          //call function to populate Manager list
+          prompts.menu.menu_view_mgm.choices = [
+            ...await mdEmp.emp_read_all_mgm(),
+          ];
+          return prompts.menu.menu_view_mgm;
+          break;
+
+        //===============
+        //update employee role
+        //===============
+        case "4":
+          //call function to populate Employee list -- update employee role
+          prompts.menu.menu_upd_emp_rle[prmtIndex].choices = [
+            ...await mdEmp.emp_read_all_with_role(),
+          ];
+          return prompts.menu.menu_upd_emp_rle[prmtIndex];
+          break;
+
         default:
           break;
       }
@@ -82,7 +104,7 @@ const controllerRouter = async (ans) => {
           //starting with first prompt
           return prompts.addPrompts.role[prmtIndex];
           break;
-
+        
         case "3":
           //calling functions for adding employee
           return prompts.addPrompts.employee[prmtIndex];
@@ -176,7 +198,7 @@ const controllerRouter = async (ans) => {
 //===========================
 // VIEWING SECTION -- BEGINS
 //===========================
-case "menu_view":
+    case "menu_view":
       //view dept, role or employee
       switch (helpers.getMenuPos(ans.answer)) {
         case "1":
@@ -211,10 +233,53 @@ case "menu_view":
       }
     break;
 
-
-
+    //view Employees by Manager processing
+    case "menu_view_mgm":
+        //1. get manager (employee) id from user selection
+        const mgmID = helpers.getMenuPos(ans.answer);
+        //2. pass manager ID to employee model to select all his employees
+        console.log(``);
+        console.table(await mdEmp.emp_read_all_by_mgmid(mgmID));
+        console.log(``);
+        return prompts.menu.menu_main;
+    break;
 //=========================
 // VIEWING SECTION -- ENDS
+//=========================
+
+//=========================
+// UPDATING SECTION -- BEGINS
+//=========================
+    //Updating employee's role
+    case "empupd-id":
+    case "empupd-role_id":
+      //1. get employee id or role id from user selection
+      ans.answer = helpers.getMenuPos(ans.answer);
+      //2. pass ID to utils to store it. (updating prompt counter as well)
+      prmtIndex = helpers.setEmpRoleUpd(ans, prmtIndex);
+      if(ans.name === "empupd-id"){
+        //querying role table 
+        prompts.menu.menu_upd_emp_rle[prmtIndex].choices = [
+          ...helpers.getRoleArray(await mdRole.rle_read_all()),
+        ];
+      }
+      else if (ans.name === "empupd-role_id"){
+        //updating employee's role and returning to main menu
+        console.log(
+          `${await mdEmp.emp_role_upd(
+            helpers.empRoleUpd
+          )} Employee Role Updated successfully!\n`
+        );
+        //resetting prompt index
+        prmtIndex = 0;
+        //return to main menu
+        return prompts.menu.menu_main;
+      }
+
+      return prompts.menu.menu_upd_emp_rle[prmtIndex];
+  break;
+//=========================
+// UPDATING SECTION -- ENDS
 //=========================
 
     default:
