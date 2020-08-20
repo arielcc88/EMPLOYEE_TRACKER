@@ -83,6 +83,17 @@ const controllerRouter = async (ans) => {
           return prompts.menu.menu_upd_emp_rle[prmtIndex];
           break;
 
+        //===============
+        //update employee manager
+        //===============
+        case "5":
+          //call function to populate Employee list -- update employee role
+          prompts.menu.menu_upd_emp_mgm[prmtIndex].choices = [
+            ...await mdEmp.emp_read_all_with_manager(),
+          ];
+          return prompts.menu.menu_upd_emp_mgm[prmtIndex];
+          break;
+
         default:
           break;
       }
@@ -277,7 +288,36 @@ const controllerRouter = async (ans) => {
       }
 
       return prompts.menu.menu_upd_emp_rle[prmtIndex];
-  break;
+    break;
+
+    //Updating Employee's Manager
+    case "empupdmgm-id":
+    case "empupdmgm-manager_id":
+      //1. get employee id or role id from user selection
+      ans.answer = helpers.getMenuPos(ans.answer);
+      //2. pass ID to utils to store it. (updating prompt counter as well)
+      prmtIndex = helpers.setEmpMgmUpd(ans, prmtIndex);
+      if(ans.name === "empupdmgm-id"){
+        //querying role table 
+        prompts.menu.menu_upd_emp_mgm[prmtIndex].choices = [
+          ...await mdEmp.emp_read_id_name(),
+        ];
+      }
+      else if (ans.name === "empupdmgm-manager_id"){
+        //updating employee's role and returning to main menu
+        console.log(
+          `${await mdEmp.emp_manager_upd(
+            helpers.empMgmUpd
+          )} Employee Manager Updated successfully!\n`
+        );
+        //resetting prompt index
+        prmtIndex = 0;
+        //return to main menu
+        return prompts.menu.menu_main;
+      }
+
+      return prompts.menu.menu_upd_emp_mgm[prmtIndex];
+    break;
 //=========================
 // UPDATING SECTION -- ENDS
 //=========================

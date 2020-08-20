@@ -69,6 +69,41 @@ const emp_read_all = () => {
 };
 
 //---------------
+//EMPLOYEE SELECT (id and full name only)
+//---------------
+//---------------
+//EMPLOYEE SELECT WITH MANAGER
+//---------------
+const emp_read_id_name = () => {
+    return new Promise(resolve => {
+        //DB Connection
+        const connection = mysql.createConnection(db_conn);
+        //Initiating connection
+        try {
+            connection.connect((err) => {
+                if (err) throw err;
+                //----------------
+                //Inserting department if connected
+                connection.query(
+                    "SELECT concat(emp.id, '. ', emp.first_name, ' ', emp.last_name) as employee " +
+                    "FROM employee as emp",
+                    function (err, res) {
+                        if (err) throw err;
+                        //end connection
+                        connection.end();
+                        //returning new promise with names and titles of current employees
+                        const emp_idnameString = res.map(emp => { return `${emp.employee}` });
+                        resolve(emp_idnameString);
+                    }
+                );
+            });
+        } catch (error) {
+            console.error("DB_ERR! " + error);
+        }
+    });
+};
+
+//---------------
 //EMPLOYEE SELECT FOR VIEW
 //---------------
 const emp_read_all_view = () => {
@@ -203,6 +238,40 @@ const emp_read_all_with_role = () => {
     });
 };
 
+
+//---------------
+//EMPLOYEE SELECT WITH MANAGER
+//---------------
+const emp_read_all_with_manager = () => {
+    return new Promise(resolve => {
+        //DB Connection
+        const connection = mysql.createConnection(db_conn);
+        //Initiating connection
+        try {
+            connection.connect((err) => {
+                if (err) throw err;
+                //----------------
+                //Inserting department if connected
+                connection.query(
+                    "SELECT concat(emp.id, '. ', emp.first_name, ' ', emp.last_name) as employee, " +
+                    "concat(mgm.first_name, ' ', mgm.last_name) as manager " +
+                    "FROM employee as emp LEFT JOIN employee as mgm on emp.manager_id = mgm.id ",
+                    function (err, res) {
+                        if (err) throw err;
+                        //end connection
+                        connection.end();
+                        //returning new promise with names and titles of current employees
+                        const emp_mgmString = res.map(emp => { return `${emp.employee} --> ${emp.manager} (current manager)` });
+                        resolve(emp_mgmString);
+                    }
+                );
+            });
+        } catch (error) {
+            console.error("DB_ERR! " + error);
+        }
+    });
+};
+
 //---------------
 //EMPLOYEE ROLE UPDATE
 //---------------
@@ -235,12 +304,47 @@ const emp_role_upd = (empRoleUpd) => {
 };
 
 
+//---------------
+//EMPLOYEE MGM UPDATE
+//---------------
+const emp_manager_upd = (empMgmUpd) => {
+    return new Promise(resolve => {
+        //DB Connection
+        const connection = mysql.createConnection(db_conn);
+        //Initiating connection
+        try {
+            connection.connect((err) => {
+                if (err) throw err;
+                //----------------
+                //Inserting department if connected
+                connection.query(
+                    "UPDATE employee " +
+                    "SET manager_id = '" + empMgmUpd.manager_id + "'" +
+                    "WHERE id = '" + empMgmUpd.id + "'",
+                    function (err, res) {
+                        if (err) throw err;
+                        //end connection
+                        connection.end();
+                        resolve(res.affectedRows);
+                    }
+                );
+            });
+        } catch (error) {
+            console.error("DB_ERR! " + error);
+        }
+    });
+};
+
+
 module.exports = { 
     emp_insert, 
     emp_read_all, 
+    emp_read_id_name,
     emp_read_all_view, 
     emp_read_all_mgm,
     emp_read_all_by_mgmid,
     emp_read_all_with_role,
-    emp_role_upd 
+    emp_role_upd,
+    emp_read_all_with_manager,
+    emp_manager_upd
 };
