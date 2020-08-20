@@ -60,7 +60,6 @@ inquirer.prompt(obsQueue).ui.process.subscribe(
 
       default:
         //calling menu router
-        console.log("answer", ans);
         appController.controllerRouter(ans).then(prompt => prompter.next(prompt));
         break;
     }
