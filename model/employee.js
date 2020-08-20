@@ -121,8 +121,8 @@ const emp_read_all_view = () => {
                     "SELECT concat(emp.first_name, ' ', emp.last_name) as employee, rle.title, rle.salary, dpt.name as department, " +
                     "concat(mgm.first_name, ' ', mgm.last_name) as manager " +
                     "FROM employee as emp LEFT JOIN employee as mgm on emp.manager_id = mgm.id " +
-                    "INNER JOIN role as rle on emp.role_id = rle.id " +
-                    "INNER JOIN department as dpt on rle.department_id = dpt.id",
+                    "LEFT JOIN role as rle on emp.role_id = rle.id " +
+                    "LEFT JOIN department as dpt on rle.department_id = dpt.id",
                     function (err, res) {
                         if (err) throw err;
                         //end connection
@@ -336,6 +336,35 @@ const emp_manager_upd = (empMgmUpd) => {
 };
 
 
+const emp_delete_by_id = (emp_id) => {
+    return new Promise(resolve => {
+        //DB Connection
+        const connection = mysql.createConnection(db_conn);
+        //Initiating connection
+        try {
+            connection.connect((err) => {
+                if (err) throw err;
+                //----------------
+                //Inserting department if connected
+                connection.query(
+                    "DELETE FROM employee WHERE id = ?",
+                    [emp_id],
+                    function (err, res) {
+                        if (err) throw err;
+                        //end connection
+                        connection.end();
+                        //returning number of records affected (new PROMISE)
+                        resolve(res.affectedRows);
+                    }
+                );
+            });
+        } catch (error) {
+            console.error("DB_ERR! " + error);
+        }
+    });
+};
+
+
 module.exports = { 
     emp_insert, 
     emp_read_all, 
@@ -346,5 +375,6 @@ module.exports = {
     emp_read_all_with_role,
     emp_role_upd,
     emp_read_all_with_manager,
-    emp_manager_upd
+    emp_manager_upd,
+    emp_delete_by_id
 };

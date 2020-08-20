@@ -347,14 +347,21 @@ const controllerRouter = async (ans) => {
             break;
 
           case "2":
-            //calling for adding a role prompts
-            //starting with first prompt
-            return prompts.addPrompts.role[prmtIndex];
+            //getting existing roles and list them out
+            prompts.deletePrompts.rle.choices = [
+              ...await mdRole.rle_read_id_name(),
+            ];
+            //return prompt with list of roles
+            return prompts.deletePrompts.rle;
             break;
           
           case "3":
-            //calling functions for adding employee
-            return prompts.addPrompts.employee[prmtIndex];
+            //getting existing employees and list them out
+            prompts.deletePrompts.emp.choices = [
+              ...await mdEmp.emp_read_id_name(),
+            ];
+            //return prompt with list of employees
+            return prompts.deletePrompts.emp;
             break;
 
           default:
@@ -368,7 +375,23 @@ const controllerRouter = async (ans) => {
         //2. pass dept id to Department model deletion function
         console.log(`${await mdDepartment.dpt_delete_by_id(ans.answer)} Department removed successfully!\n`);
         return prompts.menu.menu_main;
-        break;
+      break;
+
+      case "rledel-id":
+        //1. get dept id from user selection
+        ans.answer = helpers.getMenuPos(ans.answer);
+        //2. pass dept id to Department model deletion function
+        console.log(`${await mdRole.rle_delete_by_id(ans.answer)} Role removed successfully!\n`);
+        return prompts.menu.menu_main;
+      break;
+
+      case "empdel-id":
+        //1. get dept id from user selection
+        ans.answer = helpers.getMenuPos(ans.answer);
+        //2. pass dept id to Department model deletion function
+        console.log(`${await mdEmp.emp_delete_by_id(ans.answer)} Employee information removed successfully!\n`);
+        return prompts.menu.menu_main;
+      break;
 
 
 //=========================

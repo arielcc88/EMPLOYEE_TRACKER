@@ -80,7 +80,7 @@ const dpt_read_id_name = () => {
                         if (err) throw err;
                         //end connection
                         connection.end();
-                        //returning new promise with names and titles of current employees
+                        //returning new promise with department name
                         const dpt_id_nameString = res.map(dpt => { return `${dpt.department}` });
                         resolve(dpt_id_nameString);
                     }
