@@ -63,6 +63,35 @@ const dpt_read_all = () => {
     });
 };
 
+//getting id and dpt name only
+const dpt_read_id_name = () => {
+    return new Promise(resolve => {
+        //DB Connection
+        const connection = mysql.createConnection(db_conn);
+        //Initiating connection
+        try {
+            connection.connect((err) => {
+                if (err) throw err;
+                //----------------
+                //Inserting department if connected
+                connection.query(
+                    "SELECT concat(id, '. ', name) as department FROM department",
+                    function (err, res) {
+                        if (err) throw err;
+                        //end connection
+                        connection.end();
+                        //returning new promise with names and titles of current employees
+                        const dpt_id_nameString = res.map(dpt => { return `${dpt.department}` });
+                        resolve(dpt_id_nameString);
+                    }
+                );
+            });
+        } catch (error) {
+            console.error("DB_ERR! " + error);
+        }
+    });
+};
+
 
 const dpt_read_by_id = (dpt_id) => {
     return new Promise(resolve => {
@@ -92,4 +121,33 @@ const dpt_read_by_id = (dpt_id) => {
     });
 };
 
-module.exports = { dpt_insert, dpt_read_all, dpt_read_by_id };
+
+const dpt_delete_by_id = (dpt_id) => {
+    return new Promise(resolve => {
+        //DB Connection
+        const connection = mysql.createConnection(db_conn);
+        //Initiating connection
+        try {
+            connection.connect((err) => {
+                if (err) throw err;
+                //----------------
+                //Inserting department if connected
+                connection.query(
+                    "DELETE FROM department WHERE id = ?",
+                    [dpt_id],
+                    function (err, res) {
+                        if (err) throw err;
+                        //end connection
+                        connection.end();
+                        //returning number of records affected (new PROMISE)
+                        resolve(res.affectedRows);
+                    }
+                );
+            });
+        } catch (error) {
+            console.error("DB_ERR! " + error);
+        }
+    });
+};
+
+module.exports = { dpt_insert, dpt_read_all, dpt_read_by_id, dpt_read_id_name, dpt_delete_by_id };

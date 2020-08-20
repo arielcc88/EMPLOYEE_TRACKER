@@ -94,6 +94,15 @@ const controllerRouter = async (ans) => {
           return prompts.menu.menu_upd_emp_mgm[prmtIndex];
           break;
 
+
+        //===============
+        //delete dept. role and employee
+        //===============
+        case "6":
+          //call submenu to select either dept, role or emp
+          return prompts.menu.menu_delete;
+          break;
+
         default:
           break;
       }
@@ -320,6 +329,50 @@ const controllerRouter = async (ans) => {
     break;
 //=========================
 // UPDATING SECTION -- ENDS
+//=========================
+
+//=========================
+// DELETING SECTION -- BEGINS
+//=========================
+      case "menu_delete":
+        //add dept, role or employee
+        switch (helpers.getMenuPos(ans.answer)) {
+          case "1":
+            //getting existing depts and list them out
+            prompts.deletePrompts.dpt.choices = [
+              ...await mdDepartment.dpt_read_id_name(),
+            ];
+            //return prompt with list of departments
+            return prompts.deletePrompts.dpt;
+            break;
+
+          case "2":
+            //calling for adding a role prompts
+            //starting with first prompt
+            return prompts.addPrompts.role[prmtIndex];
+            break;
+          
+          case "3":
+            //calling functions for adding employee
+            return prompts.addPrompts.employee[prmtIndex];
+            break;
+
+          default:
+            break;
+        }
+      break;
+
+      case "dptdel-id":
+        //1. get dept id from user selection
+        ans.answer = helpers.getMenuPos(ans.answer);
+        //2. pass dept id to Department model deletion function
+        console.log(`${await mdDepartment.dpt_delete_by_id(ans.answer)} Department removed successfully!\n`);
+        return prompts.menu.menu_main;
+        break;
+
+
+//=========================
+// DELETING SECTION -- ENDS
 //=========================
 
     default:
